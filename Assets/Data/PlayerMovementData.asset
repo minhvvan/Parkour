@@ -17,10 +17,11 @@ MonoBehaviour:
   jumpForce: 0.8
   gravity: 10
   jumpCoolDown: 0.1
+  decelerateRate: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
   groundedOffset: -0.14
   groundedRadius: 0.28
   rotationSmoothTime: 0.12
-  speedChangeRate: 10
+  speedChangeRate: 2

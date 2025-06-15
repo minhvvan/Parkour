@@ -10,6 +10,7 @@ public class PlayerMovementDataSo : ScriptableObject
     public float jumpForce;
     public float gravity;
     public float jumpCoolDown = .5f;
+    public float decelerateRate = 2f;
 
 
     public LayerMask groundLayer;

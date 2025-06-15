@@ -19,6 +19,7 @@ public class ParkourCharacterController : MonoBehaviour
     [SerializeField] private CinemachineBrain mainCamera;
     [SerializeField] private GameObject cinemachineCameraTarget;
     [SerializeField] private Animator animator;
+    [SerializeField] private FootTracker footTracker;
     
     [SerializeField] private PlayerMovementDataSo playerMovementData;
 
@@ -27,7 +28,8 @@ public class ParkourCharacterController : MonoBehaviour
     private float _targetRotation = 0.0f;
     private float _rotationVelocity = 0.0f;
     private float _targetSpeed = 0.0f;
-    private float _speed = 0.0f;
+    private float _speedMult = 0.0f;
+    private float _animSpeed = 0.0f;
     private float _maxJumpSpeed = 0.0f;
     private float _jumpTimeout = 0.0f;
     private bool _isJumping = false;
@@ -82,10 +84,31 @@ public class ParkourCharacterController : MonoBehaviour
     
     private void GroundCheck()
     {
-        var checkPosition = transform.position;
-        checkPosition.y -= playerMovementData.groundedOffset;
+        if (_isJumping)
+        {
+            _grounded = false;
+            
+            // 왼발
+            {
+                var checkPosition = footTracker.leftFootPosition;
+                checkPosition.y -= playerMovementData.groundedOffset;
+                _grounded |= Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            }
+            
+            // 오른발
+            {
+                var checkPosition = footTracker.rightFootPosition;
+                checkPosition.y -= playerMovementData.groundedOffset;
+                _grounded |= Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            }
+        }
+        else
+        {
+            var checkPosition = transform.position;
+            checkPosition.y -= playerMovementData.groundedOffset;
         
-        _grounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            _grounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+        }
         
         if (!animator.IsUnityNull())
         {
@@ -164,6 +187,7 @@ public class ParkourCharacterController : MonoBehaviour
     private void Move()
     {
         Vector3 inputDirection = new Vector3(parkourInputController.moveInput.x, 0.0f, parkourInputController.moveInput.y).normalized;
+        float inputMagnitude = 1f;
 
         if (parkourInputController.moveInput != Vector2.zero)
         {
@@ -175,6 +199,7 @@ public class ParkourCharacterController : MonoBehaviour
         }
         else
         {
+            inputMagnitude = playerMovementData.decelerateRate;
             _targetSpeed = 0f;
         }
 
@@ -188,8 +213,8 @@ public class ParkourCharacterController : MonoBehaviour
 
         if (!animator.IsUnityNull())
         {
-            _speed = Mathf.Lerp(_speed, _targetSpeed, Time.deltaTime * playerMovementData.speedChangeRate);
-            animator.SetFloat(SpeedAnimID, _speed);
+            _animSpeed = Mathf.Lerp(_animSpeed, _targetSpeed, Time.deltaTime * playerMovementData.speedChangeRate * inputMagnitude);
+            animator.SetFloat(SpeedAnimID, _animSpeed);
         }
     }
     
@@ -201,6 +226,20 @@ public class ParkourCharacterController : MonoBehaviour
         if (_grounded) Gizmos.color = transparentGreen;
         else Gizmos.color = transparentRed;
 
-        Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - playerMovementData.groundedOffset, transform.position.z), playerMovementData.groundedRadius);
+        if (_isJumping)
+        {
+            var left = footTracker.leftFootPosition;
+            var right = footTracker.rightFootPosition;
+
+            left.y -= playerMovementData.groundedOffset;
+            right.y -= playerMovementData.groundedOffset;
+            
+            Gizmos.DrawSphere(left, playerMovementData.groundedRadius);
+            Gizmos.DrawSphere(right, playerMovementData.groundedRadius);
+        }
+        else
+        {
+            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - playerMovementData.groundedOffset, transform.position.z), playerMovementData.groundedRadius);
+        }
     }
 }
