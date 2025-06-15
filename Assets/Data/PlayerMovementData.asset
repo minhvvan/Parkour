@@ -12,8 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e69ac998cd439744fb8a7bab2ac13f64, type: 3}
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpForce: 0.3
+  moveSpeed: 1.5
+  sprintSpeed: 2
+  jumpForce: 0.8
   gravity: 10
+  jumpCoolDown: 0.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  groundedOffset: -0.14
+  groundedRadius: 0.28
   rotationSmoothTime: 0.12
   speedChangeRate: 10
