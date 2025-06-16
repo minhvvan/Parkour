@@ -18,6 +18,8 @@ MonoBehaviour:
   gravity: 10
   jumpCoolDown: 0.1
   decelerateRate: 2
+  slopeLimit: 55
+  slopeThreshold: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -25,3 +27,4 @@ MonoBehaviour:
   groundedRadius: 0.28
   rotationSmoothTime: 0.12
   speedChangeRate: 2
+  fallThreshold: 0.3

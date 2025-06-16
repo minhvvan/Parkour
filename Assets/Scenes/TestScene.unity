@@ -69649,8 +69649,8 @@ CharacterController:
   m_Height: 1.8
   m_Radius: 0.28
   m_SlopeLimit: 45
-  m_StepOffset: 0.25
-  m_SkinWidth: 0.02
+  m_StepOffset: 0.45
+  m_SkinWidth: 0.028
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.93, z: 0}
 --- !u!1 &4523139367384344745
@@ -70389,10 +70389,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04879fdb1291cbf4f817c8f8f1148fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftFoot: {fileID: 537844052500381574}
-  rightFoot: {fileID: 4242226060562630731}
-  leftFootPosition: {x: 0, y: 0, z: 0}
-  rightFootPosition: {x: 0, y: 0, z: 0}
+  playerMovementData: {fileID: 11400000, guid: d6bcb3362d206ee4ea59ad4615b99334, type: 2}
+  leftFoot: {fileID: 3283115191417902141}
+  rightFoot: {fileID: 3726617518393252636}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  rayDistance: 2
+  footStepOffset: 0.3
+  footUpOffset: 0.5
 --- !u!4 &6983258931579675884
 Transform:
   m_ObjectHideFlags: 0

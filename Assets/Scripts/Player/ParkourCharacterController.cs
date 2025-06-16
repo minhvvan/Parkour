@@ -28,20 +28,22 @@ public class ParkourCharacterController : MonoBehaviour
     private float _targetRotation = 0.0f;
     private float _rotationVelocity = 0.0f;
     private float _targetSpeed = 0.0f;
-    private float _speedMult = 0.0f;
     private float _animSpeed = 0.0f;
     private float _maxJumpSpeed = 0.0f;
     private float _jumpTimeout = 0.0f;
     private bool _isJumping = false;
     private Vector3 _jumpMomentum = Vector3.zero;
+    private Vector3 _lastPosition;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     
     public float topClamp = 70.0f;
     public float bottomClamp = -30.0f;
+
+    private Vector3 _slopeMovement;
     
-    private const float _threshold = 0.01f;
+    private const float _cameraRotateThreshold = 0.01f;
 
     private void Start()
     {
@@ -63,7 +65,7 @@ public class ParkourCharacterController : MonoBehaviour
 
     private void RotateCamera()
     {
-        if (parkourInputController.lookInput.sqrMagnitude >= _threshold)
+        if (parkourInputController.lookInput.sqrMagnitude >= _cameraRotateThreshold)
         {
             _cinemachineTargetYaw += parkourInputController.lookInput.x;
             _cinemachineTargetPitch += parkourInputController.lookInput.y;
@@ -107,7 +109,21 @@ public class ParkourCharacterController : MonoBehaviour
             var checkPosition = transform.position;
             checkPosition.y -= playerMovementData.groundedOffset;
         
-            _grounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            var currentGrounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            if(_grounded && !currentGrounded)
+            {
+                if (Physics.Raycast(transform.position, -transform.transform.up, out var hit, float.MaxValue, playerMovementData.groundLayer))
+                {
+                    var fallDistance = Vector3.Distance(_lastPosition, hit.point);
+                    if (fallDistance < playerMovementData.fallThreshold)
+                    {
+                        currentGrounded = true;
+                    }
+                }
+            }
+
+            _lastPosition = transform.position;
+            _grounded = currentGrounded;
         }
         
         if (!animator.IsUnityNull())
@@ -175,9 +191,22 @@ public class ParkourCharacterController : MonoBehaviour
         if (deltaPosition != Vector3.zero)
         {
             var speedMult = parkourInputController.sprint ? playerMovementData.sprintSpeed : playerMovementData.moveSpeed;
-            characterController.Move(deltaPosition * speedMult);
+            
+            if (footTracker.isOnSlope)
+            {
+                // 올라가지 못하는 경사 처리                
+                if (footTracker.groundAngle > playerMovementData.slopeLimit) return;
+                
+                _slopeMovement = Vector3.ProjectOnPlane(deltaPosition, footTracker.groundNormal).normalized * deltaPosition.magnitude * speedMult;
+                characterController.Move(_slopeMovement);
+            }
+            else
+            {
+                characterController.Move(deltaPosition * speedMult);
+                // TODO: Cliff 슬라이딩 처리
+            }
         }
-
+      
         if (deltaRotation != Quaternion.identity)
         {
             transform.rotation *= deltaRotation;
@@ -241,5 +270,8 @@ public class ParkourCharacterController : MonoBehaviour
         {
             Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - playerMovementData.groundedOffset, transform.position.z), playerMovementData.groundedRadius);
         }
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + _slopeMovement * 10);
     }
 }

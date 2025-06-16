@@ -12,6 +12,9 @@ public class PlayerMovementDataSo : ScriptableObject
     public float jumpCoolDown = .5f;
     public float decelerateRate = 2f;
 
+    // Slope
+    public float slopeLimit;
+    public float slopeThreshold;
 
     public LayerMask groundLayer;
     
@@ -20,4 +23,5 @@ public class PlayerMovementDataSo : ScriptableObject
 
     public float rotationSmoothTime;
     public float speedChangeRate;
+    public float fallThreshold;
 }
