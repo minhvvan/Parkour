@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: 
   gravity: 10
-  moveSpeed: 1.5
-  sprintSpeed: 2
+  moveSpeed: 0.8
+  sprintSpeed: 1.2
   decelerateRate: 2
   rotationSmoothTime: 0.12
   speedChangeRate: 2

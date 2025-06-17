@@ -22,8 +22,6 @@ public class ParkourCharacterController : MonoBehaviour
     [SerializeField] private FootTracker footTracker;
     [SerializeField] private PlayerMovementDataSo playerMovementData;
 
-    public bool playLandingAnim { get; private set; }
-    
     private bool _grounded;
     private float _verticalVelocity;
     private float _targetRotation = 0.0f;

@@ -10,11 +10,5 @@ public class ParkourLanding : StateMachineBehaviour
     {
         _controller = animator.gameObject.GetComponent<ParkourCharacterController>();
         if (!_controller) return;
-
-        if (!_controller.playLandingAnim)
-        {
-            // 애니메이션 즉시 변환
-            animator.Play("Idle", layerIndex);
-        }
     }
 }
