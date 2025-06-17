@@ -20,9 +20,10 @@ public class ParkourCharacterController : MonoBehaviour
     [SerializeField] private GameObject cinemachineCameraTarget;
     [SerializeField] private Animator animator;
     [SerializeField] private FootTracker footTracker;
-    
     [SerializeField] private PlayerMovementDataSo playerMovementData;
 
+    public bool playLandingAnim { get; private set; }
+    
     private bool _grounded;
     private float _verticalVelocity;
     private float _targetRotation = 0.0f;
@@ -33,7 +34,6 @@ public class ParkourCharacterController : MonoBehaviour
     private float _jumpTimeout = 0.0f;
     private bool _isJumping = false;
     private Vector3 _jumpMomentum = Vector3.zero;
-    private Vector3 _lastPosition;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -110,20 +110,19 @@ public class ParkourCharacterController : MonoBehaviour
             checkPosition.y -= playerMovementData.groundedOffset;
         
             var currentGrounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            // 발이 떨어지는 순간
             if(_grounded && !currentGrounded)
             {
-                if (Physics.Raycast(transform.position, -transform.transform.up, out var hit, float.MaxValue, playerMovementData.groundLayer))
+                if (Physics.Raycast(transform.position, Vector3.down, out var hit, float.MaxValue,
+                        playerMovementData.groundLayer, QueryTriggerInteraction.Ignore))
                 {
-                    var fallDistance = Vector3.Distance(_lastPosition, hit.point);
-                    if (fallDistance < playerMovementData.fallThreshold)
-                    {
-                        currentGrounded = true;
-                    }
+                    _grounded = hit.distance < playerMovementData.fallThreshold;
                 }
             }
-
-            _lastPosition = transform.position;
-            _grounded = currentGrounded;
+            else
+            {
+                _grounded = currentGrounded;
+            }
         }
         
         if (!animator.IsUnityNull())
@@ -195,7 +194,7 @@ public class ParkourCharacterController : MonoBehaviour
             if (footTracker.isOnSlope)
             {
                 // 올라가지 못하는 경사 처리                
-                if (footTracker.groundAngle > playerMovementData.slopeLimit) return;
+                if (footTracker.isUp && footTracker.groundAngle > playerMovementData.slopeLimit) return;
                 
                 _slopeMovement = Vector3.ProjectOnPlane(deltaPosition, footTracker.groundNormal).normalized * deltaPosition.magnitude * speedMult;
                 characterController.Move(_slopeMovement);
@@ -203,7 +202,6 @@ public class ParkourCharacterController : MonoBehaviour
             else
             {
                 characterController.Move(deltaPosition * speedMult);
-                // TODO: Cliff 슬라이딩 처리
             }
         }
       
