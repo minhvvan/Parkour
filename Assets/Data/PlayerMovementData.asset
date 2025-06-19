@@ -15,7 +15,7 @@ MonoBehaviour:
   gravity: 10
   moveSpeed: 0.8
   sprintSpeed: 1.2
-  decelerateRate: 2
+  decelerateRate: 10
   rotationSmoothTime: 0.12
   speedChangeRate: 2
   jumpForce: 0.8
@@ -26,5 +26,5 @@ MonoBehaviour:
   groundedOffset: -0.14
   groundedRadius: 0.28
   fallThreshold: 1
-  slopeLimit: 55
+  slopeLimit: 50
   slopeThreshold: 5
