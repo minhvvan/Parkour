@@ -26,4 +26,5 @@ public class PlayerMovementDataSo : ScriptableObject
     // Slope
     public float slopeLimit;
     public float slopeThreshold;
+    public float slopeResistanceMultiplier;
 }

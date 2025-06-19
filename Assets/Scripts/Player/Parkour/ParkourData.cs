@@ -2,6 +2,16 @@
 
 namespace Player.Parkour
 {
+    public struct AnimationHash
+    {
+        public static readonly int SpeedAnimID = Animator.StringToHash("Speed");
+        public static readonly int VerticalAnimID = Animator.StringToHash("Vertical");
+        public static readonly int JumpTimeoutAnimID = Animator.StringToHash("JumpTimeout");
+        public static readonly int GroundedAnimID = Animator.StringToHash("Grounded");
+        public static readonly int SlopeSlipAnimID = Animator.StringToHash("SlopeSlip");
+        public static readonly int SlopeSlipEndAnimID = Animator.StringToHash("SlopeSlipEnd");
+    }
+    
     public enum ParkourState
     {
         None = 0,
@@ -13,13 +23,6 @@ namespace Player.Parkour
     
     public struct ParkourContext
     {
-        public Vector2 moveInput;
-        public bool isSprinting;
         public bool isGrounded;
-        public Transform cameraTransform;
-        public Animator animator;
-        public CharacterController characterController;
-        public PlayerMovementDataSo movementSettingData;
-        public ParkourInputController inputController;
     }
 }

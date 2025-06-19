@@ -28,3 +28,4 @@ MonoBehaviour:
   fallThreshold: 1
   slopeLimit: 50
   slopeThreshold: 5
+  slopeResistanceMultiplier: 3

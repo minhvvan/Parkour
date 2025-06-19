@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Player;
 using Player.Parkour;
 using Player.ParkourState;
 using Unity.VisualScripting;
@@ -10,25 +11,21 @@ using UnityEngine.Serialization;
 
 public class ParkourCharacterController : MonoBehaviour
 {
-    private static readonly int VerticalAnimID = Animator.StringToHash("Vertical");
-    private static readonly int GroundedAnimID = Animator.StringToHash("Grounded");
-    private static readonly int JumpTimeoutAnimID = Animator.StringToHash("JumpTimeout");
-
     [Header("Components")]
-    [SerializeField] private CharacterController characterController;
-    [SerializeField] private ParkourInputController parkourInputController;
-    [SerializeField] private CinemachineBrain mainCamera;
+    [SerializeField] private PlayerBlackBoard blackBoard;
     [SerializeField] private GameObject cinemachineCameraTarget;
-    [SerializeField] private Animator animator;
-    [SerializeField] private FootTracker footTracker;
-    [SerializeField] private PlayerMovementDataSo playerMovementData;
-
+    
     // Parkour State
     private ParkourState _currentParkourState;
     private Dictionary<ParkourState, BaseParkourState> _parkourStates = new Dictionary<ParkourState, BaseParkourState>();
     
-    public bool applyGravity = true;
+    // slope
+    // private bool _isClimbingSlope = false;
+    // private Vector3 _slopeVelocity = Vector3.zero; 
+    // private Vector3 _slopeMovement;
     private bool _grounded;
+    
+    public bool applyGravity = true;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -39,19 +36,20 @@ public class ParkourCharacterController : MonoBehaviour
     public float verticalVelocity;
     public float horizontalVelocity;
 
-    private Vector3 _slopeMovement;
     
     private const float _cameraRotateThreshold = 0.01f;
 
     private void Start()
     {
+        blackBoard.Initialize();
+        
         _grounded = true;
         applyGravity = true;
         
         // 상태 생성
-        _parkourStates[ParkourState.OnGround] = new OnGroundParkourState(this);
-        _parkourStates[ParkourState.InAir] = new InAirParkourState(this);
-        _parkourStates[ParkourState.SlopeSlip] = new SlopeSlippingParkourState(this);
+        _parkourStates[ParkourState.OnGround] = new OnGroundParkourState(this, blackBoard);
+        _parkourStates[ParkourState.InAir] = new InAirParkourState(this, blackBoard);
+        _parkourStates[ParkourState.SlopeSlip] = new SlopeSlippingParkourState(this, blackBoard);
         
         _currentParkourState = ParkourState.OnGround;
     }
@@ -61,22 +59,15 @@ public class ParkourCharacterController : MonoBehaviour
         ApplyGravity();
         GroundCheck();
         
-        if (parkourInputController.jump && jumpTimeout <= 0)
+        if (blackBoard.parkourInputController.jump && jumpTimeout <= 0)
         {
-            parkourInputController.jump = false;
+            blackBoard.parkourInputController.jump = false;
             ChangeParkourState(ParkourState.InAir);
         }
 
         var context = new ParkourContext()
         {
-            moveInput = parkourInputController.moveInput,
-            isSprinting = parkourInputController.sprint,
             isGrounded = _grounded,
-            cameraTransform = mainCamera.transform,
-            animator = animator,
-            characterController = characterController,
-            movementSettingData = playerMovementData,
-            inputController = parkourInputController,
         };
         
         _parkourStates[_currentParkourState].OnUpdate(context);
@@ -100,10 +91,10 @@ public class ParkourCharacterController : MonoBehaviour
 
     private void RotateCamera()
     {
-        if (parkourInputController.lookInput.sqrMagnitude >= _cameraRotateThreshold)
+        if (blackBoard.parkourInputController.lookInput.sqrMagnitude >= _cameraRotateThreshold)
         {
-            _cinemachineTargetYaw += parkourInputController.lookInput.x;
-            _cinemachineTargetPitch += parkourInputController.lookInput.y;
+            _cinemachineTargetYaw += blackBoard.parkourInputController.lookInput.x;
+            _cinemachineTargetPitch += blackBoard.parkourInputController.lookInput.y;
         }
 
         _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
@@ -127,31 +118,31 @@ public class ParkourCharacterController : MonoBehaviour
             
             // 왼발
             {
-                var checkPosition = footTracker.leftFootPosition;
-                checkPosition.y -= playerMovementData.groundedOffset;
-                _grounded |= Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+                var checkPosition = blackBoard.footTracker.leftFootPosition;
+                checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
+                _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
             }
             
             // 오른발
             {
-                var checkPosition = footTracker.rightFootPosition;
-                checkPosition.y -= playerMovementData.groundedOffset;
-                _grounded |= Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+                var checkPosition = blackBoard.footTracker.rightFootPosition;
+                checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
+                _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
             }
         }
         else
         {
             var checkPosition = transform.position;
-            checkPosition.y -= playerMovementData.groundedOffset;
+            checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
         
-            var currentGrounded = Physics.CheckSphere(checkPosition, playerMovementData.groundedRadius, playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+            var currentGrounded = Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
             // 발이 떨어지는 순간
             if(_grounded && !currentGrounded)
             {
                 if (Physics.Raycast(transform.position, Vector3.down, out var hit, float.MaxValue,
-                        playerMovementData.groundLayer, QueryTriggerInteraction.Ignore))
+                        blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore))
                 {
-                    _grounded = hit.distance < playerMovementData.fallThreshold;
+                    _grounded = hit.distance < blackBoard.playerMovementData.fallThreshold;
                 }
             }
             else
@@ -160,9 +151,9 @@ public class ParkourCharacterController : MonoBehaviour
             }
         }
         
-        if (!animator.IsUnityNull())
+        if (!blackBoard.animator.IsUnityNull())
         {
-            animator.SetBool(GroundedAnimID, _grounded);
+            blackBoard.animator.SetBool(AnimationHash.GroundedAnimID, _grounded);
         }
     }
 
@@ -171,55 +162,13 @@ public class ParkourCharacterController : MonoBehaviour
         if (!applyGravity) return;
         
         // 중력 적용
-        verticalVelocity -= playerMovementData.gravity * Time.deltaTime;
-        characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
+        verticalVelocity -= blackBoard.playerMovementData.gravity * Time.deltaTime;
+        blackBoard.characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
     }
 
     private void OnAnimatorMove()
     {
-        if (_currentParkourState == ParkourState.InAir) return;
-        
-        Vector3 deltaPosition = animator.deltaPosition;
-        Quaternion deltaRotation = animator.deltaRotation;
-            
-        // 이동량 감지 및 처리
-        if (deltaPosition != Vector3.zero)
-        {
-            var speedMult = parkourInputController.sprint ? playerMovementData.sprintSpeed : playerMovementData.moveSpeed;
-            
-            if (footTracker.isOnSlope)
-            {
-                // 올라가지 못하는 경사 처리                
-                if (footTracker.isUp && footTracker.groundAngle > playerMovementData.slopeLimit)
-                {
-                    _slopeMovement = Vector3.ProjectOnPlane(Physics.gravity, footTracker.groundNormal).normalized * deltaPosition.magnitude * speedMult;
-                    Vector3.Normalize(_slopeMovement);
-
-                    transform.rotation = Quaternion.Euler(_slopeMovement);
-                }
-                else
-                {
-                    _slopeMovement = Vector3.ProjectOnPlane(deltaPosition, footTracker.groundNormal).normalized * deltaPosition.magnitude * speedMult;
-                }
-                
-                characterController.Move(_slopeMovement);
-                horizontalVelocity = (new Vector3(_slopeMovement.x, 0, _slopeMovement.z)).magnitude;
-            }
-            else
-            {
-                characterController.Move(deltaPosition * speedMult);
-                horizontalVelocity = (deltaPosition * speedMult).magnitude;
-            }
-        }
-        else
-        {
-            horizontalVelocity = 0f;
-        }
-      
-        if (deltaRotation != Quaternion.identity)
-        {
-            transform.rotation *= deltaRotation;
-        }
+        _parkourStates[_currentParkourState].HandleAnimation();
     }
     
     private void OnDrawGizmosSelected()
@@ -231,21 +180,18 @@ public class ParkourCharacterController : MonoBehaviour
 
         if (_currentParkourState == ParkourState.InAir)
         {
-            var left = footTracker.leftFootPosition;
-            var right = footTracker.rightFootPosition;
+            var left = blackBoard.footTracker.leftFootPosition;
+            var right = blackBoard.footTracker.rightFootPosition;
 
-            left.y -= playerMovementData.groundedOffset;
-            right.y -= playerMovementData.groundedOffset;
+            left.y -= blackBoard.playerMovementData.groundedOffset;
+            right.y -= blackBoard.playerMovementData.groundedOffset;
             
-            Gizmos.DrawSphere(left, playerMovementData.groundedRadius);
-            Gizmos.DrawSphere(right, playerMovementData.groundedRadius);
+            Gizmos.DrawSphere(left, blackBoard.playerMovementData.groundedRadius);
+            Gizmos.DrawSphere(right, blackBoard.playerMovementData.groundedRadius);
         }
         else
         {
-            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - playerMovementData.groundedOffset, transform.position.z), playerMovementData.groundedRadius);
+            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - blackBoard.playerMovementData.groundedOffset, transform.position.z), blackBoard.playerMovementData.groundedRadius);
         }
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + _slopeMovement * 10);
     }
 }

@@ -2257,6 +2257,7 @@ GameObject:
   - component: {fileID: 6982812146731211831}
   - component: {fileID: 6982812146731211830}
   - component: {fileID: 6982812146731211832}
+  - component: {fileID: 6982812146731211833}
   m_Layer: 3
   m_Name: PlayerArmature
   m_TagString: Player
@@ -3104,18 +3105,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 458c312cdbb71b840b1a9fd7a65e368c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 4416926082406538495}
-  parkourInputController: {fileID: 6982812146731211830}
-  mainCamera: {fileID: 9078993845201719920}
+  blackBoard: {fileID: 6982812146731211833}
   cinemachineCameraTarget: {fileID: 8338988566827378094}
-  animator: {fileID: 6982812146731211829}
-  footTracker: {fileID: 6982812146731211832}
-  playerMovementData: {fileID: 11400000, guid: d6bcb3362d206ee4ea59ad4615b99334, type: 2}
   applyGravity: 1
   topClamp: 70
   bottomClamp: -30
   jumpTimeout: 0
   verticalVelocity: 0
+  horizontalVelocity: 0
 --- !u!114 &6982812146731211832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3137,6 +3134,25 @@ MonoBehaviour:
   rayDistance: 2
   footStepOffset: 0.3
   footUpOffset: 0.5
+--- !u!114 &6982812146731211833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926082406538485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2622c00399ab488996440db261858157, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterController: {fileID: 4416926082406538495}
+  _parkourInputController: {fileID: 6982812146731211830}
+  _mainCamera: {fileID: 9078993845201719920}
+  _animator: {fileID: 6982812146731211829}
+  _footTracker: {fileID: 6982812146731211832}
+  _playerMovementData: {fileID: 11400000, guid: d6bcb3362d206ee4ea59ad4615b99334,
+    type: 2}
 --- !u!4 &6983258931579675884
 Transform:
   m_ObjectHideFlags: 0
