@@ -27,5 +27,7 @@ MonoBehaviour:
   groundedRadius: 0.28
   fallThreshold: 1
   slopeLimit: 50
+  maxClimbableAngle: 55
   slopeThreshold: 5
   slopeResistanceMultiplier: 3
+  stepOffset: 0.5

@@ -15,6 +15,8 @@ namespace Player.ParkourState
         private Vector3 _slopeVelocity = Vector3.zero; 
         private Vector3 _slopeMovement;
         
+        private float _consistentForwardTime = 0f;
+        
         public OnGroundParkourState(ParkourCharacterController parkourCharacterController, PlayerBlackBoard playerBlackBoard) : base(parkourCharacterController, playerBlackBoard)
         {
         }
@@ -69,7 +71,7 @@ namespace Player.ParkourState
                 var speedMult = _playerBlackBoard.parkourInputController.sprint ? _playerBlackBoard.playerMovementData.sprintSpeed : _playerBlackBoard.playerMovementData.moveSpeed;
                 
                 if (_playerBlackBoard.footTracker.isOnSlope)
-                {
+                {                   
                     // 올라가지 못하는 경사 진입 시
                     if (_playerBlackBoard.footTracker.isUp && _playerBlackBoard.footTracker.groundAngle > _playerBlackBoard.playerMovementData.slopeLimit)
                     {

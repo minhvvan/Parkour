@@ -21,6 +21,7 @@ public class FootTracker : MonoBehaviour
     public Vector3 leftFootPosition { get; private set; }
     public Vector3 rightFootPosition { get; private set; }
     public bool isUp { get; private set; }
+    public float heightDiff { get; private set; }
 
     private Vector3 _leftGroundPos;
     private Vector3 _rightGroundPos;
@@ -42,8 +43,9 @@ public class FootTracker : MonoBehaviour
 
         groundNormal = Vector3.Cross(forwardHit.point - currentHit.point, rightHitPoint - currentHit.point);
         groundAngle = Vector3.Angle(groundNormal, Vector3.up);
-        isOnSlope = groundAngle > playerMovementData.slopeThreshold;
+        isOnSlope = groundAngle > playerMovementData.slopeThreshold && groundAngle < playerMovementData.maxClimbableAngle;
         isUp = forwardHit.point.y > currentHit.point.y;
+        heightDiff = Mathf.Abs(forwardHit.point.y - currentHit.point.y);
     }
     
     private RaycastHit GetGroundHit(Vector3 startPos)
@@ -63,7 +65,15 @@ public class FootTracker : MonoBehaviour
         {
             if (groundAngle > playerMovementData.slopeLimit)
             {
-                Gizmos.color = Color.red;
+                if (heightDiff > playerMovementData.stepOffset)
+                {
+                    Gizmos.color = Color.magenta;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                
                 Gizmos.DrawWireSphere(transform.position, 0.5f);
             }
             else

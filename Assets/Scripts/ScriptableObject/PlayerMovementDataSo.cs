@@ -6,9 +6,11 @@ using UnityEngine;
 public class PlayerMovementDataSo : ScriptableObject
 {
     // Default
+    [Header("Default")]
     public float gravity;
     
     // Move
+    [Space, Header("Move")]
     public float moveSpeed;
     public float sprintSpeed;
     public float decelerateRate = 2f;
@@ -16,6 +18,7 @@ public class PlayerMovementDataSo : ScriptableObject
     public float speedChangeRate;
     
     // Jump
+    [Space, Header("Jump")]
     public float jumpForce;
     public float jumpCoolDown = .5f;
     public LayerMask groundLayer;
@@ -24,7 +27,10 @@ public class PlayerMovementDataSo : ScriptableObject
     public float fallThreshold;
 
     // Slope
+    [Space, Header("Slope")]
     public float slopeLimit;
+    public float maxClimbableAngle;
     public float slopeThreshold;
     public float slopeResistanceMultiplier;
+    public float stepOffset;
 }
