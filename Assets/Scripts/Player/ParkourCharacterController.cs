@@ -1,13 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Cinemachine;
 using Player;
 using Player.Parkour;
 using Player.ParkourState;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class ParkourCharacterController : MonoBehaviour
 {
@@ -163,6 +159,11 @@ public class ParkourCharacterController : MonoBehaviour
         
         // 중력 적용
         verticalVelocity -= blackBoard.playerMovementData.gravity * Time.deltaTime;
+        
+        if (_grounded && verticalVelocity <= 0)
+        {
+            verticalVelocity = -2f;
+        }
         blackBoard.characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
     }
 
@@ -173,6 +174,8 @@ public class ParkourCharacterController : MonoBehaviour
     
     private void OnDrawGizmosSelected()
     {
+        if (!Application.isPlaying) return;
+        
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
         Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
