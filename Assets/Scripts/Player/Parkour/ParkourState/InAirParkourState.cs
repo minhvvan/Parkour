@@ -16,12 +16,6 @@ namespace Player.ParkourState
         public override void OnEnter()
         {
             _maxJumpSpeed = Mathf.Sqrt(2.0f * _playerBlackBoard.playerMovementData.gravity * _playerBlackBoard.playerMovementData.jumpForce);
-            AnimatorStateInfo currentState = _playerBlackBoard.animator.GetCurrentAnimatorStateInfo(0);
-
-            if (!currentState.IsName("Landing") && !currentState.IsName("Jump"))
-            {
-                _parkourCharacterController.verticalVelocity = _maxJumpSpeed;
-            }
         }
 
         public override void OnUpdate(ParkourContext context)
@@ -62,6 +56,7 @@ namespace Player.ParkourState
             {
                 var verticalAnimVale = (1 - _parkourCharacterController.verticalVelocity / _maxJumpSpeed) * 0.5f;
             
+                Debug.Log($"Vel: {_parkourCharacterController.verticalVelocity}, Value: {verticalAnimVale}");
                 _playerBlackBoard.animator.SetFloat(AnimationHash.VerticalAnimID, verticalAnimVale);
                 _playerBlackBoard.animator.SetFloat(AnimationHash.JumpTimeoutAnimID, _parkourCharacterController.jumpTimeout);
             }

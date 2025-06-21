@@ -22,13 +22,13 @@ public class ParkourCharacterController : MonoBehaviour
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
+    private float _maxJumpSpeed;
     
     public float topClamp = 70.0f;
     public float bottomClamp = -30.0f;
     public float jumpTimeout = 0.0f;
     public float verticalVelocity;
     public float horizontalVelocity;
-
     
     private const float _cameraRotateThreshold = 0.01f;
 
@@ -45,6 +45,7 @@ public class ParkourCharacterController : MonoBehaviour
         _parkourStates[ParkourState.SlopeSlip] = new SlopeSlippingParkourState(this, blackBoard);
         
         _currentParkourState = ParkourState.OnGround;
+        _maxJumpSpeed = Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);
     }
 
     private void Update()
@@ -58,7 +59,8 @@ public class ParkourCharacterController : MonoBehaviour
             AnimatorStateInfo currentState = blackBoard.animator.GetCurrentAnimatorStateInfo(0);
             if (!currentState.IsName("Landing") && !currentState.IsName("Jump"))
             {
-                verticalVelocity = Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);
+                blackBoard.animator.SetTrigger(AnimationHash.JumpStart);
+                verticalVelocity = _maxJumpSpeed;
             }
         }
 
@@ -140,7 +142,7 @@ public class ParkourCharacterController : MonoBehaviour
         
         // 중력 적용
         verticalVelocity -= blackBoard.playerMovementData.gravity * Time.deltaTime;
-        
+            
         if (_grounded && verticalVelocity <= 0)
         {
             verticalVelocity = -Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);

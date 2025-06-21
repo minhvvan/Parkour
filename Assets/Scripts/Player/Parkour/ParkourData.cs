@@ -10,6 +10,7 @@ namespace Player.Parkour
         public static readonly int GroundedAnimID = Animator.StringToHash("Grounded");
         public static readonly int SlopeSlipAnimID = Animator.StringToHash("SlopeSlip");
         public static readonly int SlopeSlipEndAnimID = Animator.StringToHash("SlopeSlipEnd");
+        public static readonly int JumpStart = Animator.StringToHash("JumpStart");
     }
     
     public enum ParkourState
