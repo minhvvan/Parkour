@@ -15,8 +15,6 @@ namespace Player.ParkourState
         private Vector3 _slopeVelocity = Vector3.zero; 
         private Vector3 _slopeMovement;
         
-        private float _consistentForwardTime = 0f;
-        
         public OnGroundParkourState(ParkourCharacterController parkourCharacterController, PlayerBlackBoard playerBlackBoard) : base(parkourCharacterController, playerBlackBoard)
         {
         }

@@ -17701,6 +17701,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 538212933}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &538474636 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5540896150045053622, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1163746762}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &541782957
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38284,11 +38290,6 @@ PrefabInstance:
       propertyPath: m_StepOffset
       value: 0.3
       objectReference: {fileID: 0}
-    - target: {fileID: 8854400090452108490, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
-        type: 3}
-      propertyPath: footStepOffset
-      value: 0.14
-      objectReference: {fileID: 0}
     - target: {fileID: 8861220975734281198, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
         type: 3}
       propertyPath: _mainCamera
@@ -38297,8 +38298,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1671943404874358452, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1163746766}
   m_SourcePrefab: {fileID: 100100000, guid: 6648eb41c394d3c418f4f785b4e2fa1b, type: 3}
+--- !u!1 &1163746763 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1671943404874358452, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1163746762}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &1163746765 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 8080511057487421556, guid: 6648eb41c394d3c418f4f785b4e2fa1b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1163746762}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1163746766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163746763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46a3f9701c910b34ca0496980a6e9e2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 1163746765}
+  rootBone: {fileID: 538474636}
+  heightPadding: 0
+  radiusPadding: 0
 --- !u!1001 &1164559650
 PrefabInstance:
   m_ObjectHideFlags: 0

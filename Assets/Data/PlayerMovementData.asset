@@ -25,7 +25,7 @@ MonoBehaviour:
     m_Bits: 1
   groundedOffset: -0.14
   groundedRadius: 0.28
-  fallThreshold: 1
+  fallThreshold: 0.4
   slopeLimit: 50
   maxClimbableAngle: 55
   slopeThreshold: 5

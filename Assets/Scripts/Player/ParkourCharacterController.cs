@@ -16,9 +16,6 @@ public class ParkourCharacterController : MonoBehaviour
     private Dictionary<ParkourState, BaseParkourState> _parkourStates = new Dictionary<ParkourState, BaseParkourState>();
     
     // slope
-    // private bool _isClimbingSlope = false;
-    // private Vector3 _slopeVelocity = Vector3.zero; 
-    // private Vector3 _slopeMovement;
     private bool _grounded;
     
     public bool applyGravity = true;
@@ -108,28 +105,28 @@ public class ParkourCharacterController : MonoBehaviour
     
     private void GroundCheck()
     {
-        if (_currentParkourState == ParkourState.InAir)
+        // if (_currentParkourState == ParkourState.InAir)
+        // {
+        //     _grounded = false;
+        //     
+        //     // 왼발
+        //     {
+        //         var checkPosition = blackBoard.footTracker.leftFootPosition;
+        //         checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
+        //         _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+        //     }
+        //     
+        //     // 오른발
+        //     {
+        //         var checkPosition = blackBoard.footTracker.rightFootPosition;
+        //         checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
+        //         _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
+        //     }
+        // }
+        // else
         {
-            _grounded = false;
-            
-            // 왼발
-            {
-                var checkPosition = blackBoard.footTracker.leftFootPosition;
-                checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
-                _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
-            }
-            
-            // 오른발
-            {
-                var checkPosition = blackBoard.footTracker.rightFootPosition;
-                checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
-                _grounded |= Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
-            }
-        }
-        else
-        {
-            var checkPosition = transform.position;
-            checkPosition.y -= blackBoard.playerMovementData.groundedOffset;
+            var checkPosition = transform.position + blackBoard.characterController.center;
+            checkPosition.y -=  (blackBoard.characterController.height/2 + blackBoard.playerMovementData.groundedOffset);
         
             var currentGrounded = Physics.CheckSphere(checkPosition, blackBoard.playerMovementData.groundedRadius, blackBoard.playerMovementData.groundLayer, QueryTriggerInteraction.Ignore);
             // 발이 떨어지는 순간
@@ -162,7 +159,7 @@ public class ParkourCharacterController : MonoBehaviour
         
         if (_grounded && verticalVelocity <= 0)
         {
-            verticalVelocity = -2f;
+            verticalVelocity = -Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);
         }
         blackBoard.characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
     }
@@ -181,20 +178,22 @@ public class ParkourCharacterController : MonoBehaviour
 
         Gizmos.color = _grounded ? transparentGreen : transparentRed;
 
-        if (_currentParkourState == ParkourState.InAir)
+        // if (_currentParkourState == ParkourState.InAir)
+        // {
+        //     var left = blackBoard.footTracker.leftFootPosition;
+        //     var right = blackBoard.footTracker.rightFootPosition;
+        //
+        //     left.y -= blackBoard.playerMovementData.groundedOffset;
+        //     right.y -= blackBoard.playerMovementData.groundedOffset;
+        //     
+        //     Gizmos.DrawSphere(left, blackBoard.playerMovementData.groundedRadius);
+        //     Gizmos.DrawSphere(right, blackBoard.playerMovementData.groundedRadius);
+        // }
+        // else
         {
-            var left = blackBoard.footTracker.leftFootPosition;
-            var right = blackBoard.footTracker.rightFootPosition;
-
-            left.y -= blackBoard.playerMovementData.groundedOffset;
-            right.y -= blackBoard.playerMovementData.groundedOffset;
-            
-            Gizmos.DrawSphere(left, blackBoard.playerMovementData.groundedRadius);
-            Gizmos.DrawSphere(right, blackBoard.playerMovementData.groundedRadius);
-        }
-        else
-        {
-            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - blackBoard.playerMovementData.groundedOffset, transform.position.z), blackBoard.playerMovementData.groundedRadius);
+            var checkPosition = transform.position + blackBoard.characterController.center;
+            checkPosition.y -=  (blackBoard.characterController.height/2 + blackBoard.playerMovementData.groundedOffset);
+            Gizmos.DrawSphere(checkPosition, blackBoard.playerMovementData.groundedRadius);
         }
     }
 }
