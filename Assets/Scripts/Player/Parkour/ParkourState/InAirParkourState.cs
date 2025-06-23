@@ -56,7 +56,6 @@ namespace Player.ParkourState
             {
                 var verticalAnimVale = (1 - _parkourCharacterController.verticalVelocity / _maxJumpSpeed) * 0.5f;
             
-                Debug.Log($"Vel: {_parkourCharacterController.verticalVelocity}, Value: {verticalAnimVale}");
                 _playerBlackBoard.animator.SetFloat(AnimationHash.VerticalAnimID, verticalAnimVale);
                 _playerBlackBoard.animator.SetFloat(AnimationHash.JumpTimeoutAnimID, _parkourCharacterController.jumpTimeout);
             }

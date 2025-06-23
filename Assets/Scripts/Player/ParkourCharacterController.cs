@@ -43,6 +43,7 @@ public class ParkourCharacterController : MonoBehaviour
         _parkourStates[ParkourState.OnGround] = new OnGroundParkourState(this, blackBoard);
         _parkourStates[ParkourState.InAir] = new InAirParkourState(this, blackBoard);
         _parkourStates[ParkourState.SlopeSlip] = new SlopeSlippingParkourState(this, blackBoard);
+        _parkourStates[ParkourState.Crouch] = new CrouchParkourState(this, blackBoard);
         
         _currentParkourState = ParkourState.OnGround;
         _maxJumpSpeed = Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);
@@ -61,6 +62,21 @@ public class ParkourCharacterController : MonoBehaviour
             {
                 blackBoard.animator.SetTrigger(AnimationHash.JumpStart);
                 verticalVelocity = _maxJumpSpeed;
+            }
+        }
+
+        if (blackBoard.parkourInputController.crouch)
+        {
+            if (_currentParkourState != ParkourState.Crouch)
+            {
+                ChangeParkourState(ParkourState.Crouch);
+            }
+        }
+        else
+        {
+            if (_currentParkourState != ParkourState.OnGround)
+            {
+                ChangeParkourState(ParkourState.OnGround);
             }
         }
 
