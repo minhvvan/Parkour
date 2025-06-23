@@ -25,6 +25,12 @@ namespace Player.ParkourState
 
         public override void OnUpdate(ParkourContext context)
         {
+            if (_playerBlackBoard.parkourInputController.crouch)
+            {
+                _parkourCharacterController.ChangeParkourState(Parkour.ParkourState.Crouch);
+                return;
+            }
+            
             Vector3 inputDirection = new Vector3(_playerBlackBoard.parkourInputController.moveInput.x, 0.0f, _playerBlackBoard.parkourInputController.moveInput.y).normalized;
 
             if (_playerBlackBoard.parkourInputController.moveInput != Vector2.zero)

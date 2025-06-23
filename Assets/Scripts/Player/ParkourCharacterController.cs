@@ -60,23 +60,8 @@ public class ParkourCharacterController : MonoBehaviour
             AnimatorStateInfo currentState = blackBoard.animator.GetCurrentAnimatorStateInfo(0);
             if (!currentState.IsName("Landing") && !currentState.IsName("Jump"))
             {
-                blackBoard.animator.SetTrigger(AnimationHash.JumpStart);
+                blackBoard.animator.SetBool(AnimationHash.JumpStart, true);
                 verticalVelocity = _maxJumpSpeed;
-            }
-        }
-
-        if (blackBoard.parkourInputController.crouch)
-        {
-            if (_currentParkourState != ParkourState.Crouch)
-            {
-                ChangeParkourState(ParkourState.Crouch);
-            }
-        }
-        else
-        {
-            if (_currentParkourState != ParkourState.OnGround)
-            {
-                ChangeParkourState(ParkourState.OnGround);
             }
         }
 

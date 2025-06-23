@@ -27,12 +27,13 @@ public class ParkourInputController : MonoBehaviour, Parkour.IPlayerActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        jump = context.ReadValue<bool>();
+        if(context.started) jump = true;
     }
 
     public void OnSprint(InputAction.CallbackContext context)
     {
-        sprint = context.ReadValue<bool>();
+        if(context.started) sprint = true;
+        else if(context.canceled) sprint = false;
     }
 
     public void OnCrouch(InputAction.CallbackContext context)
