@@ -17,7 +17,7 @@ namespace Player.ParkourState
 
         public override void OnEnter()
         {
-            _playerBlackBoard.animator.SetBool(AnimationHash.Crouch, true);
+            _playerBlackBoard.animator.SetBool(AnimationHash.CrouchAnimID, true);
         }
 
         public override void OnUpdate(ParkourContext context)
@@ -54,7 +54,7 @@ namespace Player.ParkourState
 
         public override void OnExit()
         {
-            _playerBlackBoard.animator.SetBool(AnimationHash.Crouch, false);
+            _playerBlackBoard.animator.SetBool(AnimationHash.CrouchAnimID, false);
         }
 
         public override void HandleAnimation()

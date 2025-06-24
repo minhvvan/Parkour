@@ -44,6 +44,7 @@ public class ParkourCharacterController : MonoBehaviour
         _parkourStates[ParkourState.InAir] = new InAirParkourState(this, blackBoard);
         _parkourStates[ParkourState.SlopeSlip] = new SlopeSlippingParkourState(this, blackBoard);
         _parkourStates[ParkourState.Crouch] = new CrouchParkourState(this, blackBoard);
+        _parkourStates[ParkourState.ClimbWall] = new ClimbWallState(this, blackBoard);
         
         _currentParkourState = ParkourState.OnGround;
         _maxJumpSpeed = Mathf.Sqrt(2.0f * blackBoard.playerMovementData.gravity * blackBoard.playerMovementData.jumpForce);
@@ -53,15 +54,27 @@ public class ParkourCharacterController : MonoBehaviour
     {
         ApplyGravity();
         GroundCheck();
-        
-        if (blackBoard.parkourInputController.jump && jumpTimeout <= 0)
+
+        if (blackBoard.parkourInputController.jump)
         {
             blackBoard.parkourInputController.jump = false;
-            AnimatorStateInfo currentState = blackBoard.animator.GetCurrentAnimatorStateInfo(0);
-            if (!currentState.IsName("Landing") && !currentState.IsName("Jump"))
+
+            var parkourObject = blackBoard.parkourSystem.DetectParkourObjects();
+            if (parkourObject != null && parkourObject.CanPerform())
             {
-                blackBoard.animator.SetBool(AnimationHash.JumpStart, true);
-                verticalVelocity = _maxJumpSpeed;
+                parkourObject.Perform(this);
+            }
+            else
+            {
+                if (jumpTimeout <= 0)
+                {
+                    AnimatorStateInfo currentState = blackBoard.animator.GetCurrentAnimatorStateInfo(0);
+                    if (!currentState.IsName("Landing") && !currentState.IsName("Jump"))
+                    {
+                        blackBoard.animator.SetBool(AnimationHash.JumpStartAnimID, true);
+                        verticalVelocity = _maxJumpSpeed;
+                    }
+                }
             }
         }
 

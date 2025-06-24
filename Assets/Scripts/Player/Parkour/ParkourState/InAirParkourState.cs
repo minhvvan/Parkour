@@ -26,7 +26,7 @@ namespace Player.ParkourState
 
                 if (_parkourCharacterController.verticalVelocity <= 0 && _parkourCharacterController.jumpTimeout <= 0)
                 {
-                    _playerBlackBoard.animator.SetBool(AnimationHash.JumpStart, false);
+                    _playerBlackBoard.animator.SetBool(AnimationHash.JumpStartAnimID, false);
                     _parkourCharacterController.ChangeParkourState(Parkour.ParkourState.OnGround);
                 }
             }
